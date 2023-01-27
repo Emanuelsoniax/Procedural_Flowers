@@ -12,11 +12,14 @@ public class Phyllotaxis : MonoBehaviour
     [SerializeField]
     private float floretScale;
     [SerializeField]
-    private float upscaling;        //upscaling parameter
+    private float upscalingFactor;       
     [SerializeField]
+    private float heightFactor;     
     private float floretY;          //y-position of floret 
     [SerializeField]
     private int n;                  //floret
+    [SerializeField]
+    private float headRadius;
 
     private Vector2 CalculatePhyllotaxis(float _degree, float _scale, int _count)
     {
@@ -32,24 +35,29 @@ public class Phyllotaxis : MonoBehaviour
     private Vector2 position;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
+        GameObject underlyingSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        //Vector3 sphereScale = new Vector3();
+        //underlyingSphere.transform.localScale = 
     }
 
-    // Update is called once per frame
-    void Update()
+
+    private void Update()
     {
-        if (Input.GetKey(KeyCode.Space))
+        GenerateFlorets();
+    }
+    private void GenerateFlorets()
+    {
+        while ((c * Mathf.Sqrt(n)) < headRadius)
         {
             position = CalculatePhyllotaxis(degree, c, n);
-            GameObject floretInstance = (GameObject)Instantiate(floret);
+            GameObject floretInstance = Instantiate(floret);
             floretInstance.transform.position = new Vector3(position.x, floretY, position.y);
             floretInstance.transform.localScale = new Vector3(floretScale, floretScale, floretScale);
+            floretScale += upscalingFactor;
+            floretY -= heightFactor;
             n++;
-            floretScale += upscaling;
-            floretY -= 0.01f;
-
         }
     }
 }
