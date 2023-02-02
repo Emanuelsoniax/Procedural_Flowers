@@ -2,19 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Phyllotaxis : MonoBehaviour
 {
     public GameObject floret;
+    [SerializeField]
+    private List<GameObject> florets = new List<GameObject>();
     [SerializeField]
     private float degree;            //divergence angle
     [SerializeField]
     private float c;           
     [SerializeField]
+    [Range(0.0f, 0.5f)]
     private float floretScale;
     [SerializeField]
-    private float upscalingFactor;       
+    [Range(0.01f, 0.05f)]
+    private float upscalingFactor;
+    private float currentScale;
     [SerializeField]
-    private float heightFactor;     
+    private float startingHeight;
+    [SerializeField]
+    private float heightFactor;
+    [SerializeField]
+    [Range(0.1f, 0.5f)]
+    private float rotationFactor;
+    private float rotationX;
     private float floretY;          //y-position of floret 
     [SerializeField]
     private int n;                  //floret
@@ -32,32 +44,47 @@ public class Phyllotaxis : MonoBehaviour
         return new Vector2(x, z);
     }
 
+    public void ResetFlowerHead()
+    {
+        for (int i = florets.Count-1; i >= 0; i--)
+        {
+            DestroyImmediate(florets[i]);
+        }
+        florets.Clear();
+        n = 0;
+        currentScale = floretScale;
+        floretY = startingHeight;
+        rotationX = 1;
+    }
+
+
     private Vector2 position;
-
-    // Start is called before the first frame update
-    private void Start()
-    {
-        GameObject underlyingSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        //Vector3 sphereScale = new Vector3();
-        //underlyingSphere.transform.localScale = 
-    }
-
-
-    private void Update()
-    {
-        GenerateFlorets();
-    }
-    private void GenerateFlorets()
+    public void GenerateFlorets()
     {
         while ((c * Mathf.Sqrt(n)) < headRadius)
         {
             position = CalculatePhyllotaxis(degree, c, n);
-            GameObject floretInstance = Instantiate(floret);
-            floretInstance.transform.position = new Vector3(position.x, floretY, position.y);
-            floretInstance.transform.localScale = new Vector3(floretScale, floretScale, floretScale);
-            floretScale += upscalingFactor;
+            GameObject floretInstance = Instantiate(floret, transform);
+            florets.Add(floretInstance);
+            EditFloret(floretInstance);
+            currentScale += upscalingFactor;
             floretY -= heightFactor;
             n++;
         }
+    }
+
+    public void EditFloret(GameObject _floretInstance)
+    {
+        //set location
+       _floretInstance.transform.position = new Vector3(position.x, floretY, position.y);
+        //set scale
+       _floretInstance.transform.localScale = new Vector3(currentScale, currentScale, currentScale);
+        //set rotation
+        _floretInstance.transform.LookAt(transform);
+        _floretInstance.transform.eulerAngles -= new Vector3(rotationX += rotationFactor, 0, 0);
+
+        //generate petal shape
+       _floretInstance.GetComponent<FlowerPetal>().ResetPetal();
+       _floretInstance.GetComponent<FlowerPetal>().Generate();
     }
 }
