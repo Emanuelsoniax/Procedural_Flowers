@@ -6,11 +6,11 @@ using UnityEngine;
 public class Phyllotaxis : MonoBehaviour
 {
     public GameObject floret;
-    [SerializeField]
     private List<GameObject> florets = new List<GameObject>();
     [SerializeField]
     private float degree;            //divergence angle
     [SerializeField]
+    [Range(0.9f, 1.2f)]
     private float c;           
     [SerializeField]
     [Range(0.0f, 0.5f)]
@@ -32,6 +32,10 @@ public class Phyllotaxis : MonoBehaviour
     private int n;                  //floret
     [SerializeField]
     private float headRadius;
+
+    [SerializeField]
+    private Gradient floretColor;
+    private MaterialPropertyBlock propertyBlock;
 
     private Vector2 CalculatePhyllotaxis(float _degree, float _scale, int _count)
     {
@@ -70,6 +74,13 @@ public class Phyllotaxis : MonoBehaviour
             currentScale += upscalingFactor;
             floretY -= heightFactor;
             n++;
+        }
+
+        for(int i =0; i < florets.Count; i++)
+        {
+            FlowerPetal petal = florets[i].GetComponent<FlowerPetal>();
+            petal.propertyBlock.SetColor("_BaseColor", floretColor.Evaluate(((float)i/ florets.Count)));
+            florets[i].GetComponent<MeshRenderer>().SetPropertyBlock(petal.propertyBlock);  
         }
     }
 

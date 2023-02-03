@@ -55,6 +55,7 @@ public class FlowerPetal : MonoBehaviour
     [SerializeField]
     private int[] triangles;
     private Mesh mesh;
+    public MaterialPropertyBlock propertyBlock;
     public void Generate()
     {
         CreateSpine();
@@ -62,6 +63,7 @@ public class FlowerPetal : MonoBehaviour
         CreateEndNode();
 
         CreateShape();
+        propertyBlock = new MaterialPropertyBlock();
     }
 
     public void ResetPetal()
@@ -187,20 +189,20 @@ public class FlowerPetal : MonoBehaviour
         mesh.RecalculateNormals();
     }
 
-    private void OnDrawGizmos()
-    {
-        foreach (Node _node in spineNodes)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(_node.Position, 0.5f);
-        }
+    //private void OnDrawGizmos()
+    //{
+    //    foreach (Node _node in spineNodes)
+    //    {
+    //        Gizmos.color = Color.red;
+    //        Gizmos.DrawSphere(_node.Position, 0.5f);
+    //    }
 
-        foreach (Node _node in branchNodes)
-        {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawSphere(_node.Position, 0.5f);
-        }
+    //    foreach (Node _node in branchNodes)
+    //    {
+    //        Gizmos.color = Color.blue;
+    //        Gizmos.DrawSphere(_node.Position, 0.5f);
+    //    }
 
-    }
+    //}
 
 }
